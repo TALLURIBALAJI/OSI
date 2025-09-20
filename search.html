@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - OSINT Framework Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-search-location"></i>
+                <span>OSINT Portal</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="search.html" class="nav-link active">Search</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="search-page">
+        <div class="search-container">
+            <div class="search-header">
+                <h1>OSINT Search Portal</h1>
+                <p>Enter information to search across public databases</p>
+            </div>
+
+            <div class="search-form-container">
+                <form class="search-form" id="searchForm">
+                    <div class="form-group">
+                        <label for="searchType">Search Type</label>
+                        <select id="searchType" class="form-select">
+                            <option value="email">Email Address</option>
+                            <option value="phone">Phone Number</option>
+                            <option value="ip">IP Address</option>
+                            <option value="name">Full Name</option>
+                            <option value="username">Username/Handle</option>
+                            <option value="domain">Domain</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="searchInput">Search Query</label>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="form-input" 
+                            placeholder="Enter an email (example@gmail.com)"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary search-btn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2>Search Results</h2>
+                    <div class="export-buttons">
+                        <button class="btn btn-outline" id="exportPDF">
+                            <i class="fas fa-file-pdf"></i>
+                            Export PDF
+                        </button>
+                        <button class="btn btn-outline" id="exportCSV">
+                            <i class="fas fa-file-csv"></i>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js?v=20250920"></script>
+</body>
+</html>
