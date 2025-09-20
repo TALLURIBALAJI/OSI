@@ -317,6 +317,17 @@ body {
     transform: translateY(-1px);
 }
 
+/* Force dark options for native select */
+select option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+select {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
 .form-select:focus,
 .form-input:focus {
     outline: none;
@@ -330,6 +341,90 @@ body {
     justify-self: start;
     font-size: 1.1rem;
     padding: 1rem 2rem;
+}
+
+/* Custom Select Dropdown */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select-trigger {
+    padding: 1rem;
+    border: 2px solid #2a2a3e;
+    border-radius: 8px;
+    background: #272525;
+    color: #000000;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-select-trigger:hover {
+    border-color: rgba(0, 212, 255, 0.5);
+    background: #1b1919;
+    transform: translateY(-1px);
+}
+
+.custom-select-trigger .arrow {
+    transition: transform 0.3s ease;
+    color: #00d4ff;
+}
+
+.custom-select.open .arrow {
+    transform: rotate(180deg);
+}
+
+.custom-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #292626;
+    border: 2px solid #2a2a3e;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 0;
+    overflow: hidden;
+    z-index: 1000;
+    transition: max-height 0.3s ease;
+}
+
+.custom-select.open .custom-options {
+    max-height: 300px;
+}
+
+.custom-option {
+    padding: 0.75rem 1rem;
+    color: #000000;
+    background: #2b2727;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #272424;
+}
+
+.custom-option:last-child {
+    border-bottom: none;
+}
+
+.custom-option:hover {
+    background: #00d4ff;
+    color: #241f1f;
+    transform: translateX(5px);
+}
+
+.custom-option.selected {
+    background: #141313;
+    color: #00d4ff;
+    font-weight: 600;
 }
 
 /* Results Section */

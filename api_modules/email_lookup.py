@@ -51,14 +51,6 @@ class EmailLookup:
         except Exception as e:
             logger.error(f"Domain analysis error: {str(e)}")
         
-        # Social media presence hints
-        try:
-            social_hints = self._get_social_hints(email)
-            if social_hints:
-                results.append(social_hints)
-        except Exception as e:
-            logger.error(f"Social hints error: {str(e)}")
-        
         return results
     
     def _validate_email(self, email):
@@ -185,42 +177,4 @@ class EmailLookup:
             
         except Exception as e:
             logger.error(f"Domain analysis error: {str(e)}")
-            return None
-    
-    def _get_social_hints(self, email):
-        """Get hints about potential social media presence"""
-        try:
-            username = email.split('@')[0]
-            domain = email.split('@')[1] if '@' in email else ''
-            
-            # Common social media platforms
-            platforms = [
-                'twitter.com',
-                'instagram.com',
-                'linkedin.com',
-                'facebook.com',
-                'github.com',
-                'reddit.com'
-            ]
-            
-            hints = {
-                'Username': username,
-                'Potential Profiles': f"Check {username} on social platforms",
-                'Suggested Search': f"Search for '{username}' on social media",
-                'Email Domain': domain,
-                'Google Search': f"https://www.google.com/search?q=\"{username}\"",
-                'LinkedIn Search': f"https://www.linkedin.com/search/results/people/?keywords={username}",
-                'Twitter Search': f"https://twitter.com/search?q={username}",
-                'Instagram Search': f"https://www.instagram.com/{username}/",
-                'GitHub Search': f"https://github.com/{username}"
-            }
-            
-            return {
-                'platform': 'Social Media Hints',
-                'status': 'info',
-                'details': hints
-            }
-            
-        except Exception as e:
-            logger.error(f"Social hints error: {str(e)}")
             return None

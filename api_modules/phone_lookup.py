@@ -51,8 +51,12 @@ class PhoneLookup:
                 truecaller_number = formatted_for_truecaller.replace('+', '')
                 truecaller_with_plus = formatted_for_truecaller
                 
-                # Get location information
+                # Get location and state information
                 location = self._get_real_location(parsed_number)
+                state = self._extract_state_from_location(location, parsed_number)
+                
+                # Get spam/fraud analysis
+                spam_analysis = self._analyze_spam_fraud(parsed_number, phone_number)
                 
                 phone_info = {
                     'Phone Number': phone_number,
@@ -64,6 +68,13 @@ class PhoneLookup:
                     'Type': self._get_number_type(parsed_number),
                     'Valid': 'Yes',
                     'Possible': 'Yes' if phonenumbers.is_possible_number(parsed_number) else 'No',
+                    # Spam & Fraud Protection
+                    'Spam Status': spam_analysis['spam_status'],
+                    'Fraud Risk': spam_analysis['fraud_risk'],
+                    'Call Type': spam_analysis['call_type'],
+                    'Safety Score': spam_analysis['safety_score'],
+                    'Reported Issues': spam_analysis['reported_issues'],
+                    # External lookup links
                     'Reverse Lookup': f'https://www.google.com/search?q="{phone_number}"',
                     'Whitepages Search': f'https://www.whitepages.com/phone/{phone_number.replace("+", "").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")}',
                     'TrueCaller Profile': f'https://www.truecaller.com/search/in/{truecaller_number}',
@@ -154,61 +165,10 @@ class PhoneLookup:
                 elif len(location) > 2:
                     return location
             
-            # For Indian numbers, try to extract state information
-            elif parsed_number.country_code == 91:  # India
-                return self._get_indian_state_from_location(location)
-            
-            # For other countries, return the location as-is
+            # For other countries, return the location
             return location
         except:
             return 'Unknown'
-    
-    def _get_indian_state_from_location(self, location):
-        """Extract Indian state from location string"""
-        if not location or location == 'Unknown':
-            return 'India'
-        
-        # Common Indian states mapping
-        indian_states = {
-            'Andhra Pradesh': 'Andhra Pradesh', 'AP': 'Andhra Pradesh',
-            'Arunachal Pradesh': 'Arunachal Pradesh', 'AR': 'Arunachal Pradesh',
-            'Assam': 'Assam', 'AS': 'Assam',
-            'Bihar': 'Bihar', 'BR': 'Bihar',
-            'Chhattisgarh': 'Chhattisgarh', 'CG': 'Chhattisgarh',
-            'Delhi': 'Delhi', 'DL': 'Delhi',
-            'Goa': 'Goa', 'GA': 'Goa',
-            'Gujarat': 'Gujarat', 'GJ': 'Gujarat',
-            'Haryana': 'Haryana', 'HR': 'Haryana',
-            'Himachal Pradesh': 'Himachal Pradesh', 'HP': 'Himachal Pradesh',
-            'Jharkhand': 'Jharkhand', 'JH': 'Jharkhand',
-            'Karnataka': 'Karnataka', 'KA': 'Karnataka',
-            'Kerala': 'Kerala', 'KL': 'Kerala',
-            'Madhya Pradesh': 'Madhya Pradesh', 'MP': 'Madhya Pradesh',
-            'Maharashtra': 'Maharashtra', 'MH': 'Maharashtra',
-            'Manipur': 'Manipur', 'MN': 'Manipur',
-            'Meghalaya': 'Meghalaya', 'ML': 'Meghalaya',
-            'Mizoram': 'Mizoram', 'MZ': 'Mizoram',
-            'Nagaland': 'Nagaland', 'NL': 'Nagaland',
-            'Odisha': 'Odisha', 'OR': 'Odisha', 'Orissa': 'Odisha',
-            'Punjab': 'Punjab', 'PB': 'Punjab',
-            'Rajasthan': 'Rajasthan', 'RJ': 'Rajasthan',
-            'Sikkim': 'Sikkim', 'SK': 'Sikkim',
-            'Tamil Nadu': 'Tamil Nadu', 'TN': 'Tamil Nadu',
-            'Telangana': 'Telangana', 'TG': 'Telangana',
-            'Tripura': 'Tripura', 'TR': 'Tripura',
-            'Uttar Pradesh': 'Uttar Pradesh', 'UP': 'Uttar Pradesh',
-            'Uttarakhand': 'Uttarakhand', 'UK': 'Uttarakhand',
-            'West Bengal': 'West Bengal', 'WB': 'West Bengal'
-        }
-        
-        # Check if location contains any known state name or code
-        location_upper = location.upper()
-        for key, value in indian_states.items():
-            if key.upper() in location_upper:
-                return value
-        
-        # If no specific state found, return the location itself (could be a city)
-        return location
     
     def _get_us_state_name(self, state_code):
         """Convert US state code to full name"""
@@ -275,3 +235,86 @@ class PhoneLookup:
             return None
         
         return None
+    
+    def _analyze_spam_fraud(self, parsed_number, phone_number):
+        """Analyze phone number for spam/fraud indicators"""
+        try:
+            # Initialize analysis results
+            analysis = {
+                'spam_status': 'Unknown',
+                'fraud_risk': 'Low',
+                'call_type': 'Unknown',
+                'safety_score': '85/100',
+                'reported_issues': 'None'
+            }
+            
+            # Get country and number type
+            country_code = parsed_number.country_code
+            number_type = phonenumbers.number_type(parsed_number)
+            
+            # Basic spam/fraud analysis based on patterns
+            
+            # 1. Number type analysis
+            if number_type == phonenumbers.PhoneNumberType.TOLL_FREE:
+                analysis['call_type'] = 'Toll-Free/Business'
+                analysis['safety_score'] = '75/100'
+            elif number_type == phonenumbers.PhoneNumberType.PREMIUM_RATE:
+                analysis['call_type'] = 'Premium Rate'
+                analysis['fraud_risk'] = 'High'
+                analysis['safety_score'] = '25/100'
+                analysis['reported_issues'] = 'Premium rate charges may apply'
+            elif number_type == phonenumbers.PhoneNumberType.MOBILE:
+                analysis['call_type'] = 'Mobile'
+                analysis['safety_score'] = '85/100'
+            elif number_type == phonenumbers.PhoneNumberType.FIXED_LINE:
+                analysis['call_type'] = 'Landline'
+                analysis['safety_score'] = '90/100'
+            
+            # 2. Country-based risk assessment
+            high_risk_countries = [234, 233, 225, 221]  # Example: Nigeria, Ghana, etc.
+            if country_code in high_risk_countries:
+                analysis['fraud_risk'] = 'Medium-High'
+                analysis['safety_score'] = '45/100'
+                analysis['reported_issues'] = 'Country flagged for international fraud'
+            
+            # 3. Pattern-based analysis
+            number_str = str(parsed_number.national_number)
+            
+            # Sequential or repeated digits (common in spam)
+            if len(set(number_str)) <= 3:  # Too few unique digits
+                analysis['spam_status'] = 'Possible Spam'
+                analysis['fraud_risk'] = 'Medium'
+                analysis['safety_score'] = '40/100'
+                analysis['reported_issues'] = 'Suspicious number pattern detected'
+            
+            # Common spam patterns
+            spam_patterns = ['1234567890', '0000000000', '1111111111']
+            if any(pattern in number_str for pattern in spam_patterns):
+                analysis['spam_status'] = 'Likely Spam'
+                analysis['fraud_risk'] = 'High'
+                analysis['safety_score'] = '15/100'
+                analysis['reported_issues'] = 'Known spam number pattern'
+            
+            # 4. Length-based analysis
+            if len(number_str) < 7 or len(number_str) > 15:
+                analysis['spam_status'] = 'Invalid Format'
+                analysis['fraud_risk'] = 'High'
+                analysis['safety_score'] = '10/100'
+                analysis['reported_issues'] = 'Invalid number length'
+            
+            # 5. Set default for clean numbers
+            if analysis['spam_status'] == 'Unknown' and analysis['fraud_risk'] == 'Low':
+                analysis['spam_status'] = 'Clean'
+                analysis['reported_issues'] = 'No issues detected'
+            
+            return analysis
+            
+        except Exception as e:
+            logger.error(f"Spam/fraud analysis error: {str(e)}")
+            return {
+                'spam_status': 'Analysis Failed',
+                'fraud_risk': 'Unknown',
+                'call_type': 'Unknown',
+                'safety_score': 'N/A',
+                'reported_issues': 'Unable to analyze'
+            }

@@ -72,10 +72,10 @@ class SocialLookup:
             'First Name': name_parts[0] if name_parts else '',
             'Last Name': name_parts[-1] if len(name_parts) > 1 else '',
             'Name Parts': str(len(name_parts)),
-            'Google Search': f'https://www.google.com/search?q="{full_name}"',
-            'LinkedIn Search': f'https://www.linkedin.com/search/results/people/?keywords={full_name.replace(" ", "%20")}',
-            'Facebook Search': f'https://www.facebook.com/search/people/?q={full_name.replace(" ", "%20")}',
-            'Twitter Search': f'https://twitter.com/search?q="{full_name}"&src=typed_query&f=user',
+            'Google Search': f'https://www.google.com/search?q={quote(full_name)}',
+            'LinkedIn Search': f'https://www.linkedin.com/search/results/people/?keywords={quote(full_name)}',
+            'Facebook Search': f'https://www.facebook.com/search/people/?q={quote(full_name)}',
+            'Twitter Search': f'https://twitter.com/search?q={quote(full_name)}&src=typed_query&f=user',
             'Instagram Search': f'https://www.instagram.com/explore/tags/{full_name.replace(" ", "").lower()}/',
             'Search Suggestions': self._get_name_search_suggestions(full_name)
         }

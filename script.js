@@ -50,7 +50,7 @@ function updatePlaceholder() {
     const placeholders = {
         email: 'Enter an email (example@gmail.com)',
         phone: 'Enter a phone number (+1 202 555 0147)',
-        ip: 'Enter an IP address (192.168.1.1)',
+        ip: 'Enter an IP address (192.168.1.1 or 8.8.8.8)',
         name: 'Enter a full name (John Doe)',
         username: 'Enter a username/handle (@username)',
         domain: 'Enter a domain (example.com)'
@@ -169,7 +169,46 @@ function formatValueWithLinks(value) {
     return value.replace(urlRegex, (url) => {
         // Extract domain for display
         try {
-            const domain = new URL(url).hostname.replace('www.', '');
+            const urlObj = new URL(url);
+            const domain = urlObj.hostname.replace('www.', '');
+            
+            // Special handling for search URLs
+            if (url.includes('google.com/search')) {
+                const queryParam = urlObj.searchParams.get('q');
+                if (queryParam) {
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="result-link">
+                                <i class="fas fa-search"></i> Search "${queryParam}" on Google
+                            </a>`;
+                }
+            }
+            
+            if (url.includes('linkedin.com/search')) {
+                const keywords = urlObj.searchParams.get('keywords');
+                if (keywords) {
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="result-link">
+                                <i class="fab fa-linkedin"></i> Search "${decodeURIComponent(keywords)}" on LinkedIn
+                            </a>`;
+                }
+            }
+            
+            if (url.includes('facebook.com/search')) {
+                const query = urlObj.searchParams.get('q');
+                if (query) {
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="result-link">
+                                <i class="fab fa-facebook"></i> Search "${decodeURIComponent(query)}" on Facebook
+                            </a>`;
+                }
+            }
+            
+            if (url.includes('twitter.com/search')) {
+                const query = urlObj.searchParams.get('q');
+                if (query) {
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="result-link">
+                                <i class="fab fa-twitter"></i> Search "${query}" on Twitter
+                            </a>`;
+                }
+            }
+            
             return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="result-link">
                         <i class="fas fa-external-link-alt"></i> ${domain}
                     </a>`;

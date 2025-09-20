@@ -80,13 +80,14 @@ class InputValidator:
         return bool(re.match(name_regex, name.strip()))
     
     @staticmethod
-    def validate_ip(ip):
+    def validate_ip(ip_address):
         """Validate IP address format (IPv4 or IPv6)"""
-        if not ip:
+        if not ip_address:
             return False
         
         try:
-            ipaddress.ip_address(ip.strip())
+            # This will work for both IPv4 and IPv6
+            ipaddress.ip_address(ip_address)
             return True
         except ValueError:
             return False
